@@ -6,7 +6,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt'; //importing everything
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
 import { boolean } from 'joi';
@@ -33,8 +33,9 @@ export class User extends CoreEntity {
   @Field(() => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
-  @Column({ default: false })
-  @Field(() => Boolean)
+  @Column({ default: false }) //for TypeORM(DB), means that by default it's going to be false
+  @IsOptional() //for DTO, we are not requared to use this property
+  @Field(() => Boolean, { defaultValue: false }) // if we won't specify this property, it will be false in DB. We can do nullable here too, it will mean we can just skip the property
   verified: boolean;
 
   @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity

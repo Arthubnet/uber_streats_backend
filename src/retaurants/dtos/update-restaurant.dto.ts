@@ -7,7 +7,7 @@ class UpdateRestaurantInputType extends PartialType(CreateRestaurantDto) {}
 @InputType()
 export class UpdateRestaurantDto {
   @Field((type) => Number)
-  id: number;
+  id: number; // we need this one because it's requared field
   @Field((type) => UpdateRestaurantInputType)
-  data: UpdateRestaurantInputType;
+  data: UpdateRestaurantInputType; //this guy is optional because of Partial Type (above), so we can use any property from the object
 }
