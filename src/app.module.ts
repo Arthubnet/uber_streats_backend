@@ -40,7 +40,7 @@ import { Verification } from './users/entities/verification.entity';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      /* all the providers will have access to whatever Context returns, this case user will be accesible on all resolvers*/
+      /* all the providers will have access to whatever Context returns, this case user will be accesible on all resolvers. How it works? jwt.middleware will put the User to the request(watch jwm.middleware file), context accessing the request and getting User property from it. After, all the providers will have access to that User, because context does share it. ***Context is being called on every request*** */
       context: ({ req }) => ({ user: req['user'] }),
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),

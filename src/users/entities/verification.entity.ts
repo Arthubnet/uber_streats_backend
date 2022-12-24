@@ -19,6 +19,6 @@ export class Verification extends CoreEntity {
   /* Automatiaclly put value to code property */
   @BeforeInsert()
   createCode(): void {
-    this.code = uuidv4();
+    this.code = uuidv4(); //generates a random number
   }
 }

@@ -5,9 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { CONFIG_OPTIONS } from './jwt.constants';
 
 @Module({})
-@Global()
+@Global() //because it's global, we don't need to import it directly in User Module
 export class JwtModule {
   static forRoot(options: JwtModuleOptions): DynamicModule {
+    //DynamicModule is a module that returns another module
     return {
       module: JwtModule,
       imports: [ConfigModule],

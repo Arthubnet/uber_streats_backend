@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt'; //importing everything
 import { IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
-import { boolean } from 'joi';
 
 enum UserRole {
   Client,
@@ -37,9 +36,12 @@ export class User extends CoreEntity {
   @IsOptional() //for DTO, we are not requared to use this property
   @Field(() => Boolean, { defaultValue: false }) // if we won't specify this property, it will be false in DB. We can do nullable here too, it will mean we can just skip the property
   verified: boolean;
+  @Column()
+  @Field(() => Number)
+  age: number;
 
-  @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity
-  @BeforeUpdate() // Triggers after updating the user( calling "update" method in service)
+  @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity. In out case hashes the password before storing it in DB
+  @BeforeUpdate() // Triggers after updating the user("editProfile" method in service). Hashing the password before updating it in DB
   async hashPassword(): Promise<void> {
     try {
       this.password = await bcrypt.hash(this.password, 10);

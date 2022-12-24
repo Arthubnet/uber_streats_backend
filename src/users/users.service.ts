@@ -4,19 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateAccountInput } from './dtos/create-users.dto';
 import { LoginInput } from './dtos/login.dto';
-import { ConfigService } from '@nestjs/config';
-
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { clearConfigCache } from 'prettier';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     @InjectRepository(Verification)
-    private readonly verification: Repository<Verification>,
-    private readonly config: ConfigService,
+    private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -24,6 +22,7 @@ export class UsersService {
     email,
     password,
     role,
+    age,
   }: CreateAccountInput): Promise<{ error?: string; ok: boolean }> {
     try {
       const exists = await this.users.findOneBy({ email });
@@ -32,9 +31,9 @@ export class UsersService {
         return { error: 'There is a user created already', ok: false };
       }
       const user = await this.users.save(
-        this.users.create({ email, password, role }),
+        this.users.create({ email, password, role, age }),
       );
-      await this.verification.save(this.verification.create({ user }));
+      await this.verifications.save(this.verifications.create({ user }));
       return { ok: true };
     } catch (error) {
       console.log(error);
@@ -75,11 +74,24 @@ export class UsersService {
     if (email) {
       user.email = email;
       user.verified = false;
-      await this.verification.save(this.verification.create({ user }));
+      await this.verifications.save(this.verifications.create({ user }));
     }
     if (password) {
       user.password = password;
     }
     return this.users.save(user);
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    //we find the id of the user in verification repository, and related user to this id from user repsitory
+    const verification = await this.verifications.find({
+      where: { code },
+      relations: ['user'],
+    });
+    if (verification) {
+      verification[0].user.verified = true;
+      this.users.save(verification[0].user);
+    }
+    return false;
   }
 }
