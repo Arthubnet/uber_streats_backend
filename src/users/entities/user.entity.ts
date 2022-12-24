@@ -25,7 +25,7 @@ export class User extends CoreEntity {
   @Field(() => String)
   @IsEmail()
   email: string;
-  @Column()
+  @Column() //when we verify the user, password won't be passed in an object, so we don't hash it again
   @Field(() => String)
   password: string;
   @Column({ type: 'enum', enum: UserRole })
@@ -43,11 +43,13 @@ export class User extends CoreEntity {
   @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity. In out case hashes the password before storing it in DB
   @BeforeUpdate() // Triggers after updating the user("editProfile" method in service). Hashing the password before updating it in DB
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

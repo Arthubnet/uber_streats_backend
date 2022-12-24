@@ -7,7 +7,6 @@ import { LoginInput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
-import { clearConfigCache } from 'prettier';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +52,7 @@ export class UsersService {
       if (!checkPassword) {
         return { ok: false, error: 'The password is incorrect' };
       }
+      console.log(user);
       const token = this.jwtService.sign(user.id);
       return { ok: true, token };
     } catch (error) {
@@ -89,6 +89,7 @@ export class UsersService {
       relations: ['user'],
     });
     if (verification) {
+      console.log(verification);
       verification[0].user.verified = true;
       this.users.save(verification[0].user);
     }
