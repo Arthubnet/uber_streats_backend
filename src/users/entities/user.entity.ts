@@ -6,14 +6,8 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt'; //importing everything
-import {
-  IsEmail,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Restaurant } from 'src/retaurants/entities/restaurant.entity';
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
 
@@ -24,7 +18,7 @@ enum UserRole {
 }
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType({ isAbstract: true }) //this one for User dto
+@InputType('UserInputType', { isAbstract: true }) //this one for User dto
 @ObjectType() //GraphQl
 @Entity() //TypeORM
 export class User extends CoreEntity {
@@ -32,18 +26,22 @@ export class User extends CoreEntity {
   @Field(() => String)
   @IsEmail()
   email: string;
+
   @Column({ select: false }) //when we verify the user, password won't be passed in an object, so we don't hash it again
   @Field(() => String)
   @IsString()
   password: string;
+
   @Column({ type: 'enum', enum: UserRole })
   @Field(() => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
   @Column({ default: false }) //for TypeORM(DB), means that by default it's going to be false
   @IsOptional() //for DTO, we are not requared to use this property
   @Field(() => Boolean, { defaultValue: false }) // if we won't specify this property, it will be false in DB. We can do nullable here too, it will mean we can just skip the property
   verified: boolean;
+
   @Field(() => [Restaurant])
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
   restaurants: Restaurant[];

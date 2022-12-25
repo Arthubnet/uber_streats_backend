@@ -6,10 +6,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 import { JwtModule } from './jwt/jwt.module';
 import { Verification } from './users/entities/verification.entity';
-import { Restaurant } from './retaurants/entities/restaurant.entity';
-import { Category } from './retaurants/entities/category.entity';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { Category } from './restaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { Category } from './retaurants/entities/category.entity';
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
     UsersModule,
+    RestaurantsModule,
   ],
   controllers: [],
   providers: [],

@@ -8,4 +8,4 @@ import { RestaurantService } from './restaurants.service';
   imports: [TypeOrmModule.forFeature([Restaurant])],
   providers: [RestaurantsResolver, RestaurantService],
 })
-export class RetaurantsModule {}
+export class RestaurantsModule {}
