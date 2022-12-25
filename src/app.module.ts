@@ -8,6 +8,8 @@ import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { JwtModule } from './jwt/jwt.module';
 import { Verification } from './users/entities/verification.entity';
+import { Restaurant } from './retaurants/entities/restaurant.entity';
+import { Category } from './retaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { Verification } from './users/entities/verification.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [User, Verification], //creates these tables in DB
+      entities: [User, Verification, Restaurant, Category], //creates these tables in DB
     }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,

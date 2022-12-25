@@ -6,7 +6,13 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt'; //importing everything
-import { IsEmail, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
 
@@ -27,6 +33,7 @@ export class User extends CoreEntity {
   email: string;
   @Column({ select: false }) //when we verify the user, password won't be passed in an object, so we don't hash it again
   @Field(() => String)
+  @IsString()
   password: string;
   @Column({ type: 'enum', enum: UserRole })
   @Field(() => UserRole)
@@ -38,6 +45,7 @@ export class User extends CoreEntity {
   verified: boolean;
   @Column()
   @Field(() => Number)
+  @IsNumber()
   age: number;
 
   @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity. In out case hashes the password before storing it in DB
