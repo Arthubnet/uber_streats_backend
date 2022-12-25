@@ -21,7 +21,10 @@ export class Restaurant extends CoreEntity {
   @Column()
   bgImage: string;
 
-  @Field(() => Category)
-  @ManyToOne((type) => Category, (category) => category.restaurants)
+  @Field(() => Category, { nullable: true })
+  @ManyToOne((type) => Category, (category) => category.restaurants, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   category: Category;
 }
