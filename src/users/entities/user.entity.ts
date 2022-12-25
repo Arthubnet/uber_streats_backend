@@ -13,7 +13,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { Restaurant } from 'src/retaurants/entities/restaurant.entity';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
 
 enum UserRole {
@@ -43,10 +44,9 @@ export class User extends CoreEntity {
   @IsOptional() //for DTO, we are not requared to use this property
   @Field(() => Boolean, { defaultValue: false }) // if we won't specify this property, it will be false in DB. We can do nullable here too, it will mean we can just skip the property
   verified: boolean;
-  @Column()
-  @Field(() => Number)
-  @IsNumber()
-  age: number;
+  @Field(() => [Restaurant])
+  @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
+  restaurants: Restaurant[];
 
   @BeforeInsert() //TypeORM listener. Triggers when something happens to the Entity. In out case hashes the password before storing it in DB
   @BeforeUpdate() // Triggers after updating the user("editProfile" method in service). Hashing the password before updating it in DB

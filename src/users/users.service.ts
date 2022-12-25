@@ -21,7 +21,6 @@ export class UsersService {
     email,
     password,
     role,
-    age,
   }: CreateAccountInput): Promise<{ error?: string; ok: boolean }> {
     try {
       const exists = await this.users.findOneBy({ email });
@@ -30,7 +29,7 @@ export class UsersService {
         return { error: 'There is a user created already', ok: false };
       }
       const user = await this.users.save(
-        this.users.create({ email, password, role, age }),
+        this.users.create({ email, password, role }),
       );
       await this.verifications.save(this.verifications.create({ user }));
       return { ok: true };

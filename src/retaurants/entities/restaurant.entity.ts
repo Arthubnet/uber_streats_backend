@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { IsString, Length } from 'class-validator';
 import { CoreEntity } from './../../common/entities/core.entity';
 import { Category } from './category.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @ObjectType() //GraphQL takes it to build schema
 @Entity() //Entity for TypeORM, maps to database table
@@ -27,4 +28,8 @@ export class Restaurant extends CoreEntity {
     onDelete: 'SET NULL',
   })
   category: Category;
+
+  @Field(() => User)
+  @ManyToOne((type) => User, (user) => user.restaurants)
+  owner: User;
 }
