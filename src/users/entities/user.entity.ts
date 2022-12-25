@@ -25,7 +25,7 @@ export class User extends CoreEntity {
   @Field(() => String)
   @IsEmail()
   email: string;
-  @Column() //when we verify the user, password won't be passed in an object, so we don't hash it again
+  @Column({ select: false }) //when we verify the user, password won't be passed in an object, so we don't hash it again
   @Field(() => String)
   password: string;
   @Column({ type: 'enum', enum: UserRole })
@@ -56,7 +56,6 @@ export class User extends CoreEntity {
   async checkPassword(aPassword: string): Promise<boolean> {
     try {
       const ok = await bcrypt.compare(aPassword, this.password);
-      console.log(ok);
       return ok;
     } catch (error) {
       throw new InternalServerErrorException();

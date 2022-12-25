@@ -44,16 +44,18 @@ export class UsersService {
     password,
   }: LoginInput): Promise<{ error?: string; ok: boolean; token?: string }> {
     try {
-      const user = await this.users.findOneBy({ email });
+      const user = await this.users.find({
+        where: { email },
+        select: { password: true, id: true }, //we need to take password here because we disabled Select Password in entity. ID is also needed, but for the token
+      });
       if (!user) {
         return { ok: false, error: 'User not found' };
       }
-      const checkPassword = await user.checkPassword(password);
+      const checkPassword = await user[0].checkPassword(password);
       if (!checkPassword) {
         return { ok: false, error: 'The password is incorrect' };
       }
-      console.log(user);
-      const token = this.jwtService.sign(user.id);
+      const token = this.jwtService.sign(user[0].id);
       return { ok: true, token };
     } catch (error) {
       console.log(error);
@@ -83,16 +85,22 @@ export class UsersService {
   }
 
   async verifyEmail(code: string): Promise<boolean> {
-    //we find the id of the user in verification repository, and related user to this id from user repsitory
-    const verification = await this.verifications.find({
-      where: { code },
-      relations: ['user'],
-    });
-    if (verification) {
-      console.log(verification);
-      verification[0].user.verified = true;
-      this.users.save(verification[0].user);
+    try {
+      //we find the id of the user in verification repository, and related user to this id from user repsitory
+      const verification = await this.verifications.find({
+        where: { code },
+        relations: ['user'],
+      });
+      if (verification) {
+        verification[0].user.verified = true;
+        this.users.save(verification[0].user);
+        this.verifications.delete(verification[0].user.id);
+        return true;
+      }
+      throw new Error();
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-    return false;
   }
 }
