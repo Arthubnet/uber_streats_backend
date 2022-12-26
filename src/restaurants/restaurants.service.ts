@@ -34,6 +34,8 @@ export class RestaurantService {
           this.categories.create({ slug: categorySlug, name: categoryName }),
         );
       }
+      newRestaurant.category = category;
+      await this.restaurants.save(newRestaurant);
       return { ok: true };
     } catch (error) {
       console.log(error);

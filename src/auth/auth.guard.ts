@@ -1,11 +1,12 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Reflector } from '@nestjs/core';
-import { AllowedRoles } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { AllowedRoles } from './role.decorator';
+import { Reflector } from '@nestjs/core';
 
+@Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {} // We are getting metadata using this constructor
   canActivate(context: ExecutionContext) {
     const roles = this.reflector.get<AllowedRoles>( //this will catch @Role decorator from resolver function
       'roles',
@@ -14,6 +15,7 @@ export class AuthGuard implements CanActivate {
     if (!roles) {
       return true;
     }
+    console.log(roles);
     const gqlContext = GqlExecutionContext.create(context).getContext(); //we kind of convert context data to graphql data type, it still has the user we need
     const user: User = gqlContext['user'];
     //if there is a user (that we got from the context that got it from the header) the request will be allowed

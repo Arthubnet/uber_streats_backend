@@ -48,7 +48,7 @@ import { AuthModule } from './auth/auth.module';
       context: ({ req }) => ({ user: req['user'] }),
     }),
     JwtModule.forRoot({ privateKey: process.env.PRIVATE_KEY }),
-    AuthModule,
+    AuthModule, //because of this guy all the resolers use Auth Guard
     UsersModule,
     RestaurantsModule,
   ],
