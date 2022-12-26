@@ -9,14 +9,18 @@ import { Restaurant } from './restaurant.entity';
 @Entity() //Entity for TypeORM, maps to database table
 export class Category extends CoreEntity {
   @Field((is) => String) //GraphQl
-  @Column()
+  @Column({ unique: true })
   @IsString()
   name: string;
 
-  @Field((is) => String)
+  @Field((is) => String, { nullable: true })
+  @Column({ nullable: true })
   @IsString()
-  @Column()
   coverImage: string;
+
+  @Field(() => String)
+  @Column({ unique: true })
+  slug: string;
 
   @Field(() => [Restaurant])
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.category)

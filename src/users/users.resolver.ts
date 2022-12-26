@@ -12,6 +12,7 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
+import { Role } from 'src/auth/role.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -51,12 +52,14 @@ export class UsersResolver {
 
   @Query(() => User)
   @UseGuards(AuthGuard)
+  @Role(['Any'])
   me(@AuthUser() authUser: User) {
     return authUser;
   }
 
   @UseGuards(AuthGuard)
   @Query(() => UserProfileOutput)
+  @Role(['Any'])
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
@@ -77,8 +80,8 @@ export class UsersResolver {
     }
   }
 
-  @UseGuards(AuthGuard)
   @Mutation(() => EditProfileOutput)
+  @Role(['Any'])
   async editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
